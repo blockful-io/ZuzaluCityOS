@@ -1,5 +1,3 @@
-import { getAddress } from 'viem';
-
 export function shortenAddress(address: string, chars = 4): string {
   try {
     // const parsed = getAddress(address)
@@ -27,4 +25,9 @@ export function formatUserName(name?: string) {
     return `${name.slice(0, 6)}...${name.slice(-6)}`;
   }
   return name;
+}
+
+export function capitalizeFirstLetter(str: string): string {
+  if (!str) return str;
+  return str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
 }
