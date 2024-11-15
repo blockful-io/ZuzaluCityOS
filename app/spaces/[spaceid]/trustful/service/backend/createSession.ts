@@ -10,6 +10,7 @@ interface createSessionResponse {
   createdAt: Date;
   updatedAt: Date;
   endAt: Date;
+  sessionTitle: string;
 }
 
 interface createSessionRequest {
@@ -17,6 +18,7 @@ interface createSessionRequest {
   hostAddress: Address;
   eventId: number;
   zucityId?: string;
+  sessionTitle: string;
 }
 
 export const createSession = async ({
@@ -24,6 +26,7 @@ export const createSession = async ({
   hostAddress,
   eventId,
   zucityId,
+  sessionTitle,
 }: createSessionRequest): Promise<createSessionResponse | undefined> => {
   try {
     const response = await fetch(
@@ -38,6 +41,7 @@ export const createSession = async ({
           hostAddress: hostAddress,
           eventId: eventId,
           zucityId: zucityId,
+          sessionTitle: sessionTitle,
         } as createSessionRequest),
       },
     );

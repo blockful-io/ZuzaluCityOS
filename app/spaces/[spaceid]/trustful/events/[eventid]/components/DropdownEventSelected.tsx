@@ -18,6 +18,7 @@ import {
   CYPHERHOUSE_SPACEID,
   Role,
   ROLES,
+  spaceIdValue,
 } from '@/app/spaces/[spaceid]/trustful/constants/constants';
 import { EthereumAddress } from '@/app/spaces/[spaceid]/trustful/utils/types';
 import { useTrustful } from '@/context/TrustfulContext';
@@ -29,6 +30,7 @@ import {
 import { createSessionSC } from '@/app/spaces/[spaceid]/trustful/service/smart-contract';
 import {
   createSession,
+  deleteSession,
   getAllEventsBySpaceId,
 } from '@/app/spaces/[spaceid]/trustful/service';
 import { Event } from '@/app/spaces/[spaceid]/trustful/constants/constants';
@@ -72,7 +74,7 @@ export const DropdownEventSelected = () => {
     const fetchAllEvents = async () => {
       try {
         const eventsData = await getAllEventsBySpaceId({
-          spaceId: Number(spaceId),
+          spaceId: spaceIdValue,
           userAddress: address as Address,
         });
         setEvents(eventsData);
@@ -102,21 +104,44 @@ export const DropdownEventSelected = () => {
 
     const oneDayInSeconds = BigInt(86400);
 
-    /*Create Session in Smart Contract */
-    const smartContractCreateSession = await createSessionSC({
-      from: address as Address,
-      sessionTitle: sessionTitle,
-      duration: oneDayInSeconds,
-      msgValue: BigInt(0),
-    });
-
     /*Create Session in Backend */
     const response = await createSession({
       name: inputValuesTextArea['createSessionName'],
       eventId: Number(eventId),
       zucityId: CYPHERHOUSE_SPACEID,
       hostAddress: address as Address,
+      sessionTitle: sessionTitle,
     });
+
+    //TODO: Check the error here
+    if (response) {
+      console.log('entrou no create-session-response');
+      console.log('address', address);
+      console.log('sessionTitle', sessionTitle);
+      console.log('duration', oneDayInSeconds);
+      console.log('msgValue', BigInt(0));
+      /*Create Session in Smart Contract */
+      const smartContractCreateSession = await createSessionSC({
+        from: address as Address,
+        sessionTitle: sessionTitle,
+        duration: oneDayInSeconds,
+        msgValue: BigInt(0),
+      });
+      if (!smartContractCreateSession) {
+        const responseBackend = await deleteSession({
+          role: userRole.role,
+          sessionId: response.sessionId,
+          userAddress: address as Address,
+        });
+        if (responseBackend) {
+          setIsLoading(false);
+          toast.error(
+            'Transaction Rejected: Error creating session in Smart Contract',
+          );
+          return;
+        }
+      }
+    }
 
     if (response instanceof Error) {
       setIsLoading(false);

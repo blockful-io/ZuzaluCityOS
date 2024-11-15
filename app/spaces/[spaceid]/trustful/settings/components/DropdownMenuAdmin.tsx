@@ -42,7 +42,7 @@ import {
   MANAGER_OPTIONS,
   ACTIONS_OPTIONS,
   VILLAGER_OPTIONS,
-} from '@/app/spaces/[spaceid]/trustful/admin/components/ui-utils';
+} from '@/app/spaces/[spaceid]/trustful/settings/components/ui-utils';
 import { InputAddressUser } from '@/app/spaces/[spaceid]/trustful/components/';
 import {
   joinSession,
@@ -342,7 +342,6 @@ export const DropdownMenuAdmin = () => {
     }
 
     const response = await joinSession({
-      role: userRole.role,
       sessionId: Number(inputValuesChange['sessionId']),
       userAddress: userRole.address,
     });
@@ -400,66 +399,66 @@ export const DropdownMenuAdmin = () => {
     }
   };
 
-  const handleRevokeManagerRole = async () => {
-    toastSwitchRightNetwork();
+  // const handleRevokeManagerRole = async () => {
+  //   toastSwitchRightNetwork();
 
-    const queryVariables = {
-      where: {
-        schemaId: {
-          equals: TRUSTFUL_SCHEMAS.ATTEST_MANAGER.uid,
-        },
-        recipient: {
-          equals: inputAddress,
-        },
-        decodedDataJson: {
-          contains: 'Manager',
-        },
-      },
-    };
+  //   const queryVariables = {
+  //     where: {
+  //       schemaId: {
+  //         equals: TRUSTFUL_SCHEMAS.ATTEST_MANAGER.uid,
+  //       },
+  //       recipient: {
+  //         equals: inputAddress,
+  //       },
+  //       decodedDataJson: {
+  //         contains: 'Manager',
+  //       },
+  //     },
+  //   };
 
-    const { response, success } = await fetchEASData(
-      ID_CHECK_IN_QUERY,
-      queryVariables,
-    );
+  //   const { response, success } = await fetchEASData(
+  //     ID_CHECK_IN_QUERY,
+  //     queryVariables,
+  //   );
 
-    if (!success || !response) {
-      toast.error('Error while fetching Attestation data from Subgraphs');
-      return;
-    }
+  //   if (!success || !response) {
+  //     toast.error('Error while fetching Attestation data from Subgraphs');
+  //     return;
+  //   }
 
-    if (response.data.data.attestations.length === 0) {
-      toast.error("This user doesn't not have a Manager badge.");
-      return;
-    }
+  //   if (response.data.data.attestations.length === 0) {
+  //     toast.error("This user doesn't not have a Manager badge.");
+  //     return;
+  //   }
 
-    if (response.data.data.attestations[0].revoked) {
-      toast.error('This badge was already revoked.');
-      return;
-    }
+  //   if (response.data.data.attestations[0].revoked) {
+  //     toast.error('This badge was already revoked.');
+  //     return;
+  //   }
 
-    const txuid = response.data.data.attestations[0].id;
-    const transactionResponse = await revoke(
-      address as `0x${string}`,
-      TRUSTFUL_SCHEMAS.ATTEST_MANAGER.uid,
-      txuid as `0x${string}`,
-      0n,
-    );
+  //   const txuid = response.data.data.attestations[0].id;
+  //   const transactionResponse = await revoke(
+  //     address as `0x${string}`,
+  //     TRUSTFUL_SCHEMAS.ATTEST_MANAGER.uid,
+  //     txuid as `0x${string}`,
+  //     0n,
+  //   );
 
-    if (transactionResponse instanceof Error) {
-      setIsLoading(false);
-      toast.error(`Transaction Rejected: ${transactionResponse.message}`);
-      return;
-    }
+  //   if (transactionResponse instanceof Error) {
+  //     setIsLoading(false);
+  //     toast.error(`Transaction Rejected: ${transactionResponse.message}`);
+  //     return;
+  //   }
 
-    if (transactionResponse.status !== 'success') {
-      setIsLoading(false);
-      toast.error('Transaction Rejected. Contract execution reverted.');
-      return;
-    }
+  //   if (transactionResponse.status !== 'success') {
+  //     setIsLoading(false);
+  //     toast.error('Transaction Rejected. Contract execution reverted.');
+  //     return;
+  //   }
 
-    setIsLoading(false);
-    toast.success(`Badge sent at tx: ${transactionResponse.transactionHash}`);
-  };
+  //   setIsLoading(false);
+  //   toast.success(`Badge sent at tx: ${transactionResponse.transactionHash}`);
+  // };
 
   const handleInputValuesTextareaChange = (
     event: ChangeEvent<HTMLTextAreaElement>,
@@ -637,44 +636,6 @@ export const DropdownMenuAdmin = () => {
                   toast.error(
                     'Please enter a valid address and select a role',
                   ));
-            }}
-          >
-            <CheckIcon className="w-[16px] h-[16px]" />
-            Confirm
-          </Button>
-        </Flex>
-      </Card>
-    ),
-    [ADMIN_ACTION.REVOKE_MANAGER]: (
-      <Card
-        background={'#F5FFFF0D'}
-        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
-      >
-        <Flex className="w-full flex-col">
-          <InputAddressUser
-            onInputChange={(value: string) => setInputAddress(value)}
-            inputAddress={String(inputAddress)}
-            label={'Address to Revoke'}
-          />
-          <Box>
-            <Flex className="pb-4 gap-4 items-center">
-              <Text className="flex min-w-[80px] text-white opacity-70 text-sm font-normal leading-tight">
-                &#x26A0;WARNING&#x26A0;
-                <br />
-                {`This action is irreversible. You are revoking the Manager badge from the address ${inputAddress ? inputAddress : 'above'}. He will not be able to get this badge again and its status will show revoked for eternity in the EAS protocol. Are you sure you want to proceed?`}
-              </Text>
-            </Flex>
-          </Box>
-          <Button
-            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-            _hover={{ bg: '#B1EF42' }}
-            _active={{ bg: '#B1EF42' }}
-            isLoading={isLoading}
-            isDisabled={!isAddress(inputAddress.toString())}
-            spinner={<BeatLoader size={8} color="white" />}
-            onClick={() => {
-              setIsLoading(true);
-              handleRevokeManagerRole();
             }}
           >
             <CheckIcon className="w-[16px] h-[16px]" />

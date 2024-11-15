@@ -341,7 +341,7 @@ export const GiveBadge = () => {
       refUID:
         inputBadge.title === 'Check-out'
           ? (commentBadge as `0x${string}`)
-          : zeroAddress,
+          : '0x0000000000000000000000000000000000000000000000000000000000000000',
       data: data,
       value: BigInt(0),
     };

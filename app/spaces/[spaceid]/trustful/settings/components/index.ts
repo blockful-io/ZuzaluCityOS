@@ -1,2 +1,2 @@
 export * from './DropdownMenuAdmin';
-export * from './AdminSection';
+export * from './SettingsSection';

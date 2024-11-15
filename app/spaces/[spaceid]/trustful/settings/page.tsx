@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 'use client';
 
@@ -8,13 +7,11 @@ import { Stack, Box } from '@mui/material';
 import { useCeramicContext } from '@/context/CeramicContext';
 import { Event, Space, SpaceEventData } from '@/types';
 import SubSidebar from '@/components/layout/Sidebar/SubSidebar';
-import { useTrustful } from '@/context/TrustfulContext';
-import { Address } from 'viem';
-import { AdminSection } from './components/AdminSection';
-import { Role, ROLES } from '../constants/constants';
-import { hasRole } from '../service/smart-contract';
+import { SettingsSection } from './components/SettingsSection';
+import { ChakraProvider } from '@chakra-ui/react';
+import chakraTheme from '@/theme/lib/chakra-ui';
 
-const TrustfulAdminPage = () => {
+const TrustfulSettingsPage = () => {
   const params = useParams();
   const spaceId = params.spaceid.toString();
 
@@ -22,8 +19,7 @@ const TrustfulAdminPage = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isEventsLoading, setIsEventsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const { composeClient, ceramic, profile, username } = useCeramicContext();
-  const { setUserRole, userRole } = useTrustful();
+  const { composeClient, ceramic, profile } = useCeramicContext();
 
   const getSpaceByID = async () => {
     setIsEventsLoading(true);
@@ -147,11 +143,13 @@ const TrustfulAdminPage = () => {
             padding: '20px',
           }}
         >
-          <AdminSection />
+          <ChakraProvider theme={chakraTheme}>
+            <SettingsSection />
+          </ChakraProvider>
         </Box>
       </Stack>
     </Stack>
   );
 };
 
-export default TrustfulAdminPage;
+export default TrustfulSettingsPage;

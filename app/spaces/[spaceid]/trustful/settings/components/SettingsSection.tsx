@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import toast from 'react-hot-toast';
-import { DropdownMenuAdmin } from '@/app/spaces/[spaceid]/trustful/admin/components';
+import { DropdownMenuAdmin } from '@/app/spaces/[spaceid]/trustful/settings/components';
 import { Box } from '@chakra-ui/react';
 import { TheFooterNavbar } from '@/app/spaces/[spaceid]/trustful/components';
 
-export const AdminSection = () => {
+export const SettingsSection = () => {
   const { address, chain } = useAccount();
   const { push } = useRouter();
   const params = useParams();

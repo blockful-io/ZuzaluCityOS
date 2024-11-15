@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { ROLES } from '../../constants/constants';
 
 enum ROLES_NAME {
@@ -31,7 +32,6 @@ export const ACTIONS_OPTIONS: Record<ActionName, number> = {
 export enum ADMIN_ACTION {
   GRANT_ROLE = 'Grant Role',
   REVOKE_ROLE = 'Revoke Role',
-  REVOKE_MANAGER = 'Revoke Manager',
   SET_ATTESTATION_TITLE = 'Create Badge',
   SET_SCHEMA = 'Set Schema Action',
   REMOVE_SESSION = 'Remove session',
@@ -57,9 +57,6 @@ export const VILLAGER_OPTIONS: AdminActions[] = [
 ];
 
 export const MANAGER_OPTIONS: AdminActions[] = [
-  {
-    action: ADMIN_ACTION.REVOKE_MANAGER,
-  },
   {
     action: ADMIN_ACTION.SET_ATTESTATION_TITLE,
   },

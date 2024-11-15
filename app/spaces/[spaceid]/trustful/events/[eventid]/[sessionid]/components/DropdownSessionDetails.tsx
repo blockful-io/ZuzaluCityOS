@@ -12,14 +12,23 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { Address, isAddress } from 'viem';
+import {
+  Address,
+  encodeAbiParameters,
+  isAddress,
+  keccak256,
+  zeroAddress,
+} from 'viem';
 import { useAccount } from 'wagmi';
 import {
   Event,
   Role,
   ROLES,
 } from '@/app/spaces/[spaceid]/trustful/constants/constants';
-import { removeSession } from '@/app/spaces/[spaceid]/trustful/service/smart-contract';
+import {
+  closeSession,
+  removeSession,
+} from '@/app/spaces/[spaceid]/trustful/service/smart-contract';
 import { EthereumAddress } from '@/app/spaces/[spaceid]/trustful/utils/types';
 import { useTrustful } from '@/context/TrustfulContext';
 import toast from 'react-hot-toast';
@@ -33,8 +42,11 @@ import {
   deleteSession,
   getAllEventsBySpaceId,
   wrapSession,
+  getSession,
+  Session,
 } from '@/app/spaces/[spaceid]/trustful/service/backend/';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { solidityPackedKeccak256 } from 'ethers';
 
 export const DropdownSessionDetails = () => {
   const { address } = useAccount();
@@ -51,13 +63,16 @@ export const DropdownSessionDetails = () => {
   const [inputValuesTextArea, setInputValuesTextArea] = useState<{
     [key: string]: string;
   }>({});
-  const [inputValuesChange, setInputValuesChange] = useState<{
-    [key: string]: string;
-  }>({});
-  const [events, setEvents] = useState<Event[] | undefined>([]);
+  // const [inputValuesChange, setInputValuesChange] = useState<{
+  //   [key: string]: string;
+  // }>({});
+  const [session, setSession] = useState<Session | undefined>(undefined);
   const params = useParams();
-  const spaceId = params.spaceid.toString();
+  console.log('params', params);
   const sessionId = params.sessionid.toString();
+  const spaceId = params.spaceid.toString();
+  const eventId = params.eventid.toString();
+  const router = useRouter();
 
   // Updates the validAddress when the inputAddress changes
   useEffect(() => {
@@ -71,19 +86,54 @@ export const DropdownSessionDetails = () => {
   }, [sessionAction]);
 
   useEffect(() => {
-    const fetchAllEvents = async () => {
+    const fetchSession = async () => {
       try {
-        const eventsData = await getAllEventsBySpaceId({
-          spaceId: Number(spaceId),
-          userAddress: address as Address,
+        const sessionsData = await getSession({
+          eventid: Number(params.eventid),
         });
-        setEvents(eventsData);
+        console.log('da um session aqui po', sessionsData);
+
+        if (sessionsData && sessionsData.sessions.length > 0) {
+          const sessionById = sessionsData.sessions.find(
+            (session) => session.sessionId === Number(params.sessionid),
+          );
+
+          if (sessionById) {
+            console.log('sessinById po ', sessionById);
+            setSession(sessionById);
+          }
+        }
       } catch (error) {
         console.log('error', error);
       }
     };
-    fetchAllEvents();
+
+    fetchSession();
   }, []);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const sessionsData = await getSession({
+          eventid: Number(params.eventid),
+        });
+
+        if (sessionsData && sessionsData.sessions.length > 0) {
+          const sessionById = sessionsData.sessions.find(
+            (session) => session.sessionId === Number(params.sessionid),
+          );
+
+          if (sessionById) {
+            setSession(sessionById);
+          }
+        }
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+
+    fetchSession();
+  }, [address, params.eventid, params.sessionid]);
 
   /**Root */
   const handleRemoveSession = async () => {
@@ -92,25 +142,35 @@ export const DropdownSessionDetails = () => {
       toast.error('Please connect first. No address found.');
       return;
     }
+    console.log('session', session);
 
-    if (!validAddress) {
-      setIsLoading(false);
-      toast.error('Please enter a valid address.');
+    if (!session) {
       return;
     }
 
-    const responseSmartContract = await removeSession({
-      from: address,
-      sessionTitle: inputValuesTextArea['removeSessionTitle'],
-      sessionOwner: validAddress.address as Address,
-      msgValue: BigInt(0),
-    });
+    // if (address !== session.hostAddress) {
+    //   return;
+    // }
 
     const responseBackend = await deleteSession({
       role: userRole.role,
       sessionId: Number(sessionId),
-      userAddress: validAddress.address as Address,
+      userAddress: address as Address,
     });
+    if (responseBackend) {
+      const responseSmartContract = await removeSession({
+        from: address,
+        sessionTitle: session.sessionTitle,
+        sessionOwner: address as Address,
+        msgValue: BigInt(0),
+      });
+      if (!responseSmartContract) {
+        setIsLoading(false);
+        toast.error('Transaction Rejected');
+        return;
+      }
+      router.push(`/spaces/${spaceId}/trustful/events/${eventId}`);
+    }
 
     setIsLoading(false);
     // toast.success(
@@ -154,11 +214,42 @@ export const DropdownSessionDetails = () => {
       return;
     }
 
+    if (!session) {
+      return;
+    }
+
+    // console.log('session', session.name + '_' + session.title);
+    // const mockedSession = 'TKDWClass_1731430187447';
+
+    const sessionIdSC = solidityPackedKeccak256(
+      ['address', 'string'],
+      [session.hostAddress, session.sessionTitle],
+    );
+    console.log('sessionId', sessionId);
+
     const response = await wrapSession({
       role: userRole.role,
       sessionId: Number(sessionId),
       userAddress: address as Address,
     });
+    console.log('wrapa a session', response);
+
+    if (response) {
+      console.log('response entrou', response);
+      const responseSC = await closeSession({
+        from: address,
+        sessionId: sessionIdSC as Address,
+        msgValue: BigInt(0),
+      });
+      console.log('closeSessionResponseSC', responseSC);
+
+      if (responseSC instanceof Error) {
+        setIsLoading(false);
+        toast.error(`Transaction Rejected: ${responseSC.message}`);
+        return;
+      }
+      console.log('responseSC', responseSC);
+    }
 
     if (response instanceof Error) {
       setIsLoading(false);
@@ -212,7 +303,7 @@ export const DropdownSessionDetails = () => {
         >
           <Flex className="w-full flex-col">
             <Flex className="gap-4 pb-4 justify-start items-center">
-              <Textarea
+              {/* <Textarea
                 style={{ color: 'black' }}
                 className="text-black text-base font-normal leading-snug"
                 color="white"
@@ -231,13 +322,13 @@ export const DropdownSessionDetails = () => {
                 }
                 minH="unset"
                 resize="none"
-              />
+              /> */}
             </Flex>
-            <InputAddressUser
+            {/* <InputAddressUser
               label="Address to Session Owner"
               onInputChange={(value: string) => setInputAddress(value)}
               inputAddress={String(inputAddress)}
-            />
+            /> */}
             <Box>
               <Flex className="pb-4 gap-4 items-center">
                 <Text className="flex min-w-[80px] text-white opacity-70 text-sm font-normal leading-tight">
@@ -250,21 +341,21 @@ export const DropdownSessionDetails = () => {
               </Flex>
             </Box>
             <Button
-              className={`w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg ${!isAddress(inputAddress.toString()) || !inputValuesTextArea['removeSession'] ? 'cursor-not-allowed opacity-10' : ''}`}
+              className={`w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg ${!session ? 'cursor-not-allowed opacity-10' : ''}`}
               _hover={{ bg: '#B1EF42' }}
               _active={{ bg: '#B1EF42' }}
               isLoading={isloading}
-              isDisabled={
-                !isAddress(inputAddress.toString()) ||
-                !inputValuesTextArea['removeSessionTitle']
-              }
+              // isDisabled={
+              //   // !isAddress(inputAddress.toString()) ||
+              //   // !session.
+              // }
               spinner={<BeatLoader size={8} color="white" />}
               onClick={() => {
-                !isAddress(inputAddress.toString()) ||
-                  (!inputValuesTextArea['removeSessionTitle'] &&
-                    toast.error(
-                      'Please enter a valid address and set the session title to remove',
-                    ));
+                // !isAddress(inputAddress.toString()) ||
+                // (!session. &&
+                //   toast.error(
+                //     'Please enter a valid address and set the session title to remove',
+                //   ));
                 setIsLoading(true);
                 handleRemoveSession();
               }}

@@ -10,6 +10,7 @@ export type Session = {
   hostAddress: string;
   eventId: number;
   endAt: Date | null;
+  sessionTitle: string;
 };
 
 export interface GetSessionResponse {

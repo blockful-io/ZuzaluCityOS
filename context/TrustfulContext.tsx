@@ -23,7 +23,7 @@ import {
 } from '@/app/spaces/[spaceid]/trustful/constants/constants';
 import {
   getAllAttestationTitles,
-  getAllEvents,
+  getAllEventsBySpaceId,
   getSession,
   getUserRole,
   hasRole,
@@ -84,21 +84,21 @@ interface TrustfulContextType {
 
 const defaultContextValue: TrustfulContextType = {
   userRole: null,
-  setUserRole: () => { },
+  setUserRole: () => {},
 
   /**BadgeContext */
   selectedBadge: null,
-  setSelectedBadge: () => { },
+  setSelectedBadge: () => {},
 
   /**GiveBadgeContext */
   badgeInputAddress: null,
-  setBadgeInputAddress: () => { },
+  setBadgeInputAddress: () => {},
   addressStep: GiveBadgeStepAddress.INSERT_ADDRESS,
-  setAddressStep: () => { },
+  setAddressStep: () => {},
   inputBadgeTitleList: null,
-  setInputBadgeTitleList: () => { },
+  setInputBadgeTitleList: () => {},
   newTitleAdded: false,
-  setNewTitleAdded: () => { },
+  setNewTitleAdded: () => {},
 };
 
 const TrustfulContext = createContext<TrustfulContextType>(defaultContextValue);
@@ -153,6 +153,9 @@ export const TrustfulContextProvider: React.FC<
       filteredBadges.push('Manager');
     }
 
+    // TODO: Handle the user special badge
+    // }
+
     if (userRole?.address === TRUSTFUL_SCHEMAS.ATTEST_VILLAGER.allowedRole[0]) {
       filteredBadges.push('Check-in');
       filteredBadges.push('Check-out');
@@ -190,7 +193,6 @@ export const TrustfulContextProvider: React.FC<
 
   const { switchChain } = useSwitchChain();
   const { chainId, address } = useAccount();
-
 
   useEffect(() => {
     const fetchUserRoleByContract = async () => {
@@ -253,54 +255,56 @@ export const TrustfulContextProvider: React.FC<
   useEffect(() => {
     handleBadgeDropdown();
 
-    const fetchAllEvents = async () => {
-      try {
-        // TODO: Get all spaces -> armazenar cada spaceId // ja tem só 1
-        // TODO: Get all events do space de cada espaco
-        // get session passando cada evento e ver se o hostAddress é igual ao address
-        const spaces = await getSpace({ userAddress: address as Address });
-        const spaceIds = spaces && spaces.map((space) => space.spaceId);
+    // const fetchAllEvents = async () => {
+    //   try {
+    //     // TODO: Get all spaces -> armazenar cada spaceId // ja tem só 1
+    //     // TODO: Get all events do space de cada espaco
+    //     // get session passando cada evento e ver se o hostAddress é igual ao address
+    //     const spaces = await getSpace({ userAddress: address as Address });
+    //     const spaceIds = spaces && spaces.map((space) => space.spaceId);
 
-        if (spaceIds) {
-          for (const spaceId of spaceIds) {
-            console.log('spaceId', spaceId);
-            const events = await getAllEvents({
-              spaceId: spaceIdValue,
-              userAddress: address as Address,
-            });
+    //     if (spaceIds) {
+    //       for (const spaceId of spaceIds) {
+    //         const events = await getAllEventsBySpaceId({
+    //           spaceId: spaceIdValue,
+    //           userAddress: address as Address,
+    //         });
 
-            console.log('eventsxxxx', events);
-            if (events && events.length > 0) {
-              events.map(async (event) => {
-                const sessions = await getSession({
-                  eventid: event.eventId,
-                  userAddress: address as Address,
-                });
-                console.log('sessionssessionssessionssessions', sessions);
-                if (sessions) {
-                  sessions.sessions.forEach((session) => {
-                    if (
-                      address &&
-                      session.hostAddress &&
-                      session.hostAddress.toLowerCase() == address?.toLowerCase()
-                    ) {
-                      // Add host badge
-                      const hostBadgeTitle = `host_${session.name}`;
-                      const attendeeBadgeTitle = `attendee_${session.name}`;
-                      setInputBadgeTitleList((prevList) => [...(prevList || []), hostBadgeTitle, attendeeBadgeTitle])
-                    }
-                  });
-                }
-              });
-            }
-          }
-        }
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-    fetchAllEvents()
-  }, [address])
+    //         if (events && events.length > 0) {
+    //           events.map(async (event) => {
+    //             const sessions = await getSession({
+    //               eventid: event.eventId,
+    //               userAddress: address as Address,
+    //             });
+    //             if (sessions) {
+    //               sessions.sessions.forEach((session) => {
+    //                 if (
+    //                   address &&
+    //                   session.hostAddress &&
+    //                   session.hostAddress.toLowerCase() ==
+    //                     address?.toLowerCase()
+    //                 ) {
+    //                   // Add host badge
+    //                   const hostBadgeTitle = `host_${session.name}`;
+    //                   const attendeeBadgeTitle = `attendee_${session.name}`;
+    //                   setInputBadgeTitleList((prevList) => [
+    //                     ...(prevList || []),
+    //                     hostBadgeTitle,
+    //                     attendeeBadgeTitle,
+    //                   ]);
+    //                 }
+    //               });
+    //             }
+    //           });
+    //         }
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.log('error', error);
+    //   }
+    // };
+    // fetchAllEvents();
+  }, [address]);
 
   return (
     <TrustfulContext.Provider value={TrustfulContextData}>
