@@ -16,7 +16,7 @@ export const InputAddressUser = ({
     <Flex className="gap-4 pb-4 justify-start items-center">
       <UserIcon className="text-[#B1EF42]" />
       <Input
-        className="text-black text-base font-normal leading-snug border opacity-70"
+        className="text-white text-base font-normal leading-snug border opacity-70"
         placeholder={label}
         _placeholder={{
           className: 'text-slate-50',

@@ -47,12 +47,21 @@ export const DropdownMenuAdminEvents = () => {
   const handleCreateEvent = async () => {
     if (!address) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
       return;
     }
     if (!userRole || userRole.role == Role.NO_ROLE) {
       setIsLoading(false);
-      toast.error('Please connect first. No userRole found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No userRole found.</p>
+        </span>,
+      );
       return;
     }
 
@@ -66,7 +75,12 @@ export const DropdownMenuAdminEvents = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 

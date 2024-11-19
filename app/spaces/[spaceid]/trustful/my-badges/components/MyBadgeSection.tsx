@@ -41,7 +41,12 @@ export const MyBadgeSection: React.FC = () => {
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
-      toast.error('You have not checked in. Please check-in first.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>You have not checked in.</strong>{' '}
+          <p>Please check-in first.</p>
+        </span>,
+      );
       push('/pre-checkin');
     }
   }, [villagerAttestationCount]);
@@ -51,7 +56,12 @@ export const MyBadgeSection: React.FC = () => {
       fetchData();
     } else if (isDev) {
       toast.error(
-        'Cannot fetch your badges. Please connect your wallet to Scroll Mainnet to view your badges.',
+        <span className="flex flex-col">
+          <strong>Cannot fetch your badges.</strong>{' '}
+          <p>
+            Please connect your wallet to Scroll Mainnet to view your badges.
+          </p>
+        </span>,
       );
     }
   }, [address]);
@@ -208,14 +218,22 @@ export const MyBadgeSection: React.FC = () => {
       const attestations = response?.data?.data.attestations;
       if (!attestations) {
         toast.error(
-          'Cannot fetch EAS. Subgraph returned error with current query',
+          <span>
+            <strong>Cannot fetch EAS.</strong>{' '}
+            <p>Subgraph returned error with current query</p>
+          </span>,
         );
         return null;
       }
 
       return attestations;
     } catch (error) {
-      toast.error('Cannot fetch EAS. Subgraph returned error');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Cannot fetch EAS.</strong> <p>Subgraph returned error</p>
+        </span>,
+      );
+
       return null;
     }
   };

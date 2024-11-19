@@ -33,7 +33,12 @@ export const ShareSection = () => {
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
-      toast.error('You have not checked in. Please check-in first.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>You have not checked in.</strong>{' '}
+          <p>Please check-in first.</p>
+        </span>,
+      );
       push('/pre-checkin');
     }
   }, [villagerAttestationCount]);
@@ -46,7 +51,7 @@ export const ShareSection = () => {
           <Box
             flex={1}
             as="main"
-            className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col items-center"
+            className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col items-center lg-c:pr-[256px]"
             gap={6}
           >
             <Card

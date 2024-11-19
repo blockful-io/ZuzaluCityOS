@@ -152,17 +152,31 @@ export const GiveBadge = () => {
   /* Do not allow invalid Ethereum addresses to move into the next step */
   const handleInputAddressConfirm = () => {
     if (!address) {
-      toast.error('No account connected: Please connect your wallet.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>No account connected:</strong>{' '}
+          <p>Please connect your wallet.</p>
+        </span>,
+      );
       return;
     }
     if (badgeInputAddress && isAddress(badgeInputAddress?.address)) {
       setAddressStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
     } else if (!inputAddress || !isAddress(inputAddress)) {
-      toast.error('Field is empty.Please provide a valid Ethereum address. ');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Field is empty.</strong>{' '}
+          <p>Please provide a valid Ethereum</p>
+          address.
+        </span>,
+      );
       return;
     } else if (inputAddress && !isAddress(inputAddress)) {
       toast.error(
-        'Invalid Ethereum Address. Wrong Ethereum address format. Please try again.',
+        <span className="flex flex-col">
+          <strong>Invalid Ethereum Address.</strong>{' '}
+          <p>Wrong Ethereum address format. Please try again.</p>
+        </span>,
       );
     } else {
       setAddressStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
@@ -223,14 +237,24 @@ export const GiveBadge = () => {
   const handleAttest = async () => {
     if (!address) {
       setLoading(false);
-      toast.error('No account connected: Please connect your wallet.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>No account connected.</strong>{' '}
+          <p>Please connect your wallet.</p>
+        </span>,
+      );
       console.log('!address', !address);
       return;
     }
 
     if (isDev ? chainId !== scrollSepolia.id : chainId !== scroll.id) {
       toast.error(
-        `Unsupported network. Please switch to the ${isDev ? 'Scroll Sepolia' : 'Scroll'} network.`,
+        <span className="flex flex-col">
+          <strong>Unsupported network.</strong>{' '}
+          <p>
+            Please switch to the ${isDev ? 'Scroll Sepolia' : 'Scroll'} network.
+          </p>
+        </span>,
       );
       switchChain({ chainId: isDev ? scrollSepolia.id : scroll.id });
       return;
@@ -238,14 +262,25 @@ export const GiveBadge = () => {
 
     if (!badgeInputAddress) {
       setLoading(false);
-      toast.error('Invalid Ethereum Address: Please provide a valid address.');
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Invalid Ethereum Address:</strong>{' '}
+          <p>Please provide a valid Ethereum address.</p>
+        </span>,
+      );
       console.log('!badgeInputAddress', !badgeInputAddress);
       return;
     }
 
     if (!inputBadge) {
       setLoading(false);
-      toast.error('Invalid Badge: Please select a badge to give.');
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Invalid Badge:</strong> <p>Please select a badge to give.</p>
+        </span>,
+      );
       console.log('!inputBadge', !inputBadge);
       return;
     }
@@ -258,7 +293,12 @@ export const GiveBadge = () => {
       const isManager = await hasRole(ROLES.MANAGER, badgeInputAddress.address);
       if (isManager) {
         setLoading(false);
-        toast.error('Address is a Manager. Address already have this badge. ');
+        toast.error(
+          <span className="flex flex-col">
+            <strong>Address is a Manager.</strong>{' '}
+            <p>Address already have this badge.</p>
+          </span>,
+        );
         console.log('isManager', isManager);
         return;
       }
@@ -272,8 +312,12 @@ export const GiveBadge = () => {
         );
         if (isVillager) {
           setLoading(false);
+
           toast.error(
-            'Address already checked-in: Address already have this badge.',
+            <span className="flex flex-col">
+              <strong>Address already checked-in:</strong>{' '}
+              <p>Address already have this badge.</p>
+            </span>,
           );
           console.log('isVillager', isVillager);
           return;
@@ -283,8 +327,12 @@ export const GiveBadge = () => {
         encodeArgs = ['Check-out'];
         if (!isBytes32(commentBadge as `0x${string}`)) {
           setLoading(false);
+
           toast.error(
-            'Invalid reference UID: The format provided is not a valid bytes32.',
+            <span className="flex flex-col">
+              <strong>Invalid reference UID:</strong>{' '}
+              <p>The format provided is not a valid bytes32.</p>
+            </span>,
           );
           console.log('!isBytes32(commentBadge)');
           return;
@@ -295,9 +343,14 @@ export const GiveBadge = () => {
         );
         if (!isVillager) {
           setLoading(false);
+
           toast.error(
-            'Address already checked-out: Address already have this badge.',
+            <div className="flex flex-col">
+              <strong>Address already checked-out:</strong>{' '}
+              <p>Address already have</p>
+            </div>,
           );
+
           console.log('!isVillager2', !isVillager);
           return;
         }
@@ -313,14 +366,21 @@ export const GiveBadge = () => {
       console.log('isVillager', isVillager);
       if (!isVillager) {
         setLoading(false);
+
         toast.error(
-          'Address Cant Receive Badges: Non-Villagers cannot send/receive badges.',
+          <span className="flex flex-col">
+            <strong>Address already checked-out:</strong>{' '}
+            <p>Non-Villagers cannot send/receive badges.</p>
+          </span>,
         );
-        return;
       }
     } else {
       setLoading(false);
-      toast.error('Invalid Badge: Unexistent or invalid badge selected.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Invalid Badge:</strong> Unexistent or invalid badge selected.
+        </span>,
+      );
       return;
     }
 
@@ -349,20 +409,34 @@ export const GiveBadge = () => {
 
     if (response instanceof Error) {
       setLoading(false);
-      toast.error(`Transaction Rejected ${response.message}`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected</strong> <p>{response.message}</p>
+        </span>,
+      );
+
       return;
     }
 
     if (response.status !== 'success') {
       setLoading(false);
-      toast.error('Transaction Rejected. Contract execution reverted. ');
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected</strong>{' '}
+          <p>Contract execution reverted.</p>
+        </span>,
+      );
       return;
     }
 
-    toast.success(
-      `Badge sent https://scrollscan.com/tx/${response.transactionHash}`,
+    toast.error(
+      <span>
+        <strong>Badge sent</strong>{' '}
+        {`https://scrollscan.com/tx/${response.transactionHash}`}
+      </span>,
     );
-
     setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
     setLoading(false);
     setText('');

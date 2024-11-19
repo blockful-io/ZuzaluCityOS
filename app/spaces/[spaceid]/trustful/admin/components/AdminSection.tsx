@@ -6,8 +6,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import toast from 'react-hot-toast';
 import { DropdownMenuAdmin } from '@/app/spaces/[spaceid]/trustful/admin/components';
-import { Box } from '@chakra-ui/react';
+import { Box, ChakraProvider } from '@chakra-ui/react';
 import { TheFooterNavbar } from '@/app/spaces/[spaceid]/trustful/components';
+import chakraTheme from '@/theme/lib/chakra-ui';
 
 export const AdminSection = () => {
   const { address, chain } = useAccount();
@@ -21,14 +22,21 @@ export const AdminSection = () => {
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
-      toast.error('You have not checked in. Please check-in first.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>You have not checked in.</strong>{' '}
+          <p>Please check-in first.</p>
+        </span>,
+      );
       push('/pre-checkin');
     }
   }, [villagerAttestationCount]);
 
   return (
     <div>
-      <DropdownMenuAdmin />
+      <ChakraProvider theme={chakraTheme}>
+        <DropdownMenuAdmin />
+      </ChakraProvider>
       <Box className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full items-center">
         <TheFooterNavbar />
       </Box>

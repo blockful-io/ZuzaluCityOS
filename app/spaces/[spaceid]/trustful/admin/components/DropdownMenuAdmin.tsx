@@ -101,7 +101,13 @@ export const DropdownMenuAdmin = () => {
   const toastSwitchRightNetwork = () => {
     if (isDev ? chainId !== scrollSepolia.id : chainId !== scroll.id) {
       toast.error(
-        `Unsupported network. Please switch to the ${isDev ? 'Scroll Sepolia' : 'Scroll'} network.`,
+        <span className="flex flex-col">
+          <strong>Unsupported network.</strong>{' '}
+          <p>
+            Please check-in first. Please switch to the{' '}
+            {isDev ? 'Scroll Sepolia' : 'Scroll'} network.
+          </p>
+        </span>,
       );
       switchChain({ chainId: isDev ? scrollSepolia.id : scroll.id });
       return;
@@ -138,7 +144,11 @@ export const DropdownMenuAdmin = () => {
   const handleGrantRole = async () => {
     if (!address || !inputAddress || !role || !validAddress) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
       return;
     }
 
@@ -159,19 +169,34 @@ export const DropdownMenuAdmin = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 
     if (response.status !== 'success') {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: Contract execution reverted.`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong>{' '}
+          <p>Contract execution reverted.</p>
+        </span>,
+      );
       return;
     }
 
     setIsLoading(false);
-    toast.success(
-      `Badge sent at tx: ${`https://scrollscan.com//tx/${response.transactionHash}`}`,
+
+    toast.error(
+      <span>
+        <strong>Badge sent at tx:</strong>{' '}
+        {`https://scrollscan.com//tx/${response.transactionHash}`}
+      </span>,
     );
   };
 
@@ -179,7 +204,13 @@ export const DropdownMenuAdmin = () => {
   const handleRevokeRole = async () => {
     if (!address || !inputAddress || !role || !validAddress) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
+
       return;
     }
 
@@ -210,13 +241,23 @@ export const DropdownMenuAdmin = () => {
 
     if (response.status !== 'success') {
       setIsLoading(false);
-      toast.error('Transaction Rejected. Contract execution reverted.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected.</strong>{' '}
+          <p>Contract execution reverted.</p>
+        </span>,
+      );
+
       return;
     }
 
     setIsLoading(false);
+
     toast.success(
-      `Role revoked succefully. https://scrollscan.com//tx/${response.transactionHash}`,
+      <span className="flex flex-col">
+        <strong>Role revoked succefully.</strong>
+        <p>{`https://scrollscan.com//tx/${response.transactionHash}`}</p>
+      </span>,
     );
   };
 
@@ -224,7 +265,11 @@ export const DropdownMenuAdmin = () => {
   const handleSetSchema = async () => {
     if (!address) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
       return;
     }
 
@@ -238,17 +283,31 @@ export const DropdownMenuAdmin = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 
     if (response.status !== 'success') {
       setIsLoading(false);
-      toast.error('Transaction Rejected. Contract execution reverted.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected.</strong>{' '}
+          <p>Contract execution reverted.</p>
+        </span>,
+      );
+
       return;
     }
 
-    toast.success(`Badge sent at tx: ${response.transactionHash}`);
+    toast.error(
+      <span>
+        <strong>Badge sent at tx:</strong> {response.transactionHash}
+      </span>,
+    );
     setIsLoading(false);
   };
 
@@ -256,7 +315,12 @@ export const DropdownMenuAdmin = () => {
   const handleRemoveSession = async () => {
     if (!address || !userRole) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      toast.error(
+        <span className="flex flex-col">
+          {' '}
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
       return;
     }
 
@@ -289,7 +353,12 @@ export const DropdownMenuAdmin = () => {
   const handleAttestationTitle = async () => {
     if (!address) {
       setIsLoading(false);
-      toast.error('No account connected. Please connect your wallet.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>No account connected.</strong>{' '}
+          <p>Please connect your wallet.</p>
+        </span>,
+      );
       return;
     }
 
@@ -303,20 +372,34 @@ export const DropdownMenuAdmin = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 
     if (response.status !== 'success') {
       setIsLoading(false);
-      toast.error('Transaction Rejected. Contract execution reverted.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected.</strong>{' '}
+          <p>Contract execution reverted.</p>
+        </span>,
+      );
       return;
     }
 
     setIsLoading(false);
-    toast.success(
-      `Badge title added successfully. ${`https://scrollscan.com/tx/${response.transactionHash}`}`,
+
+    toast.error(
+      <span>
+        <strong>Badge title added successfully.</strong>{' '}
+        {`https://scrollscan.com/tx/${response.transactionHash}`}
+      </span>,
     );
+
     setNewTitleAdded(true);
   };
 
@@ -337,7 +420,11 @@ export const DropdownMenuAdmin = () => {
   const handleJoinSession = async () => {
     if (!address || !userRole) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
       return;
     }
 
@@ -349,7 +436,11 @@ export const DropdownMenuAdmin = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 
@@ -361,12 +452,20 @@ export const DropdownMenuAdmin = () => {
   const handleCreateSession = async () => {
     if (!address) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
       return;
     }
     if (!userRole || userRole.role == Role.NO_ROLE) {
       setIsLoading(false);
-      toast.error('Please connect first. No userRole found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No userRole found.</p>
+        </span>,
+      );
       return;
     }
 
@@ -380,7 +479,12 @@ export const DropdownMenuAdmin = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 
@@ -453,12 +557,23 @@ export const DropdownMenuAdmin = () => {
 
     if (transactionResponse.status !== 'success') {
       setIsLoading(false);
-      toast.error('Transaction Rejected. Contract execution reverted.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected.</strong>{' '}
+          <p>Contract execution reverted.</p>
+        </span>,
+      );
       return;
     }
 
     setIsLoading(false);
-    toast.success(`Badge sent at tx: ${transactionResponse.transactionHash}`);
+
+    toast.success(
+      <span className="flex flex-col">
+        <strong>Badge sent at tx:</strong>{' '}
+        <p>{transactionResponse.transactionHash}</p>
+      </span>,
+    );
   };
 
   const handleInputValuesTextareaChange = (
@@ -580,30 +695,30 @@ export const DropdownMenuAdmin = () => {
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Select
               placeholder="Select Role"
-              className="flex text-black opacity-70 font-normal leading-tight"
+              className="flex text-white opacity-70 font-normal leading-tight"
               color="white"
               onChange={handleRoleSelectChange}
               focusBorderColor={'#B1EF42'}
             >
               {userRole && userRole.role === Role.ROOT
                 ? Object.entries(ROLES_OPTIONS).map(
-                    ([roleName, roleValue], index) => (
-                      <option key={index} value={roleValue}>
-                        {roleName}
-                      </option>
-                    ),
-                  )
+                  ([roleName, roleValue], index) => (
+                    <option key={index} value={roleValue}>
+                      {roleName}
+                    </option>
+                  ),
+                )
                 : userRole &&
-                  userRole.role === Role.MANAGER &&
-                  Object.entries(ROLES_OPTIONS)
-                    .filter(
-                      ([_, roleValue]) => roleValue !== ROLES_OPTIONS.ROOT,
-                    )
-                    .map(([roleName, roleValue], index) => (
-                      <option key={index} value={roleValue}>
-                        {roleName}
-                      </option>
-                    ))}
+                userRole.role === Role.MANAGER &&
+                Object.entries(ROLES_OPTIONS)
+                  .filter(
+                    ([_, roleValue]) => roleValue !== ROLES_OPTIONS.ROOT,
+                  )
+                  .map(([roleName, roleValue], index) => (
+                    <option key={index} value={roleValue}>
+                      {roleName}
+                    </option>
+                  ))}
             </Select>
           </Flex>
           <InputAddressUser
@@ -712,7 +827,7 @@ export const DropdownMenuAdmin = () => {
           </Flex>
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Select
-              className="flex opacity-70 text-black font-normal leading-tight"
+              className="flex opacity-70 text-white font-normal leading-tight"
               color="white"
               placeholder="Select an option"
               onChange={handleAttestationValidBadge}
@@ -899,7 +1014,7 @@ export const DropdownMenuAdmin = () => {
         <Flex className="w-full flex-col">
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Input
-              style={{ color: 'black' }}
+              style={{ color: 'white' }}
               name="joinSession"
               placeholder="Session id"
               onChange={handleInputValuesChange}
@@ -954,8 +1069,8 @@ export const DropdownMenuAdmin = () => {
         <Flex className="w-full flex-col">
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Textarea
-              style={{ color: 'black' }}
-              className="text-black text-base font-normal leading-snug"
+              style={{ color: 'white' }}
+              className="text-white text-base font-normal leading-snug"
               color="white"
               placeholder="Set the Session Name..."
               _placeholder={{
@@ -973,9 +1088,9 @@ export const DropdownMenuAdmin = () => {
               minH="unset"
               resize="none"
             />
-            <Text>eventId:</Text>
+            <Text className="text-white">eventId:</Text>
             <Input
-              style={{ color: 'black' }}
+              style={{ color: 'white' }}
               name="createSessionEventId"
               placeholder="Event id"
               onChange={handleInputValuesChange}
@@ -983,9 +1098,9 @@ export const DropdownMenuAdmin = () => {
               type="number"
               min={1}
             />
-            <Text>ZuCityId:</Text>
+            <Text className="text-white">ZuCityId:</Text>
             <Input
-              style={{ color: 'black' }}
+              style={{ color: 'white' }}
               name="createSessionzucityId"
               placeholder="zucity Id"
               onChange={handleInputValuesChange}
@@ -994,7 +1109,7 @@ export const DropdownMenuAdmin = () => {
               min={1}
             />
           </Flex>
-          <Text>HostAddress:</Text>
+          <Text className="text-white">HostAddress:</Text>
           <InputAddressUser
             label="Address to host Address"
             onInputChange={(value: string) => setInputAddress(value)}
@@ -1043,7 +1158,7 @@ export const DropdownMenuAdmin = () => {
         <Flex className="w-full flex-col">
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Input
-              style={{ color: 'black' }}
+              style={{ color: 'white' }}
               name="wrapSessionId"
               placeholder="Session id"
               onChange={handleInputValuesChange}
@@ -1104,7 +1219,7 @@ export const DropdownMenuAdmin = () => {
             {userRole.role === Role.ROOT ? (
               <Select
                 placeholder="Select option"
-                className="flex text-black opacity-70 font-normal leading-tight"
+                className="flex text-white opacity-70 font-normal leading-tight"
                 color="white"
                 onChange={(e) => handleActionSelectChange(e, Role.ROOT)}
                 focusBorderColor={'#B1EF42'}
@@ -1118,7 +1233,7 @@ export const DropdownMenuAdmin = () => {
             ) : userRole.role === Role.MANAGER ? (
               <Select
                 placeholder="Select option"
-                className="flex text-black opacity-70 font-normal leading-tight"
+                className="flex text-white opacity-70 font-normal leading-tight"
                 color="white"
                 onChange={(e) => handleActionSelectChange(e, Role.MANAGER)}
                 focusBorderColor={'#B1EF42'}

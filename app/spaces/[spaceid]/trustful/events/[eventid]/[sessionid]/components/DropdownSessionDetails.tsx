@@ -89,7 +89,9 @@ export const DropdownSessionDetails = () => {
   const handleRemoveSession = async () => {
     if (!address || !userRole) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      <span className="flex flex-col">
+        <strong>Please connect first.</strong> <p>No address found.</p>
+      </span>;
       return;
     }
 
@@ -122,7 +124,9 @@ export const DropdownSessionDetails = () => {
   const handleJoinSession = async () => {
     if (!address || !userRole) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      <span className="flex flex-col">
+        <strong>Please connect first.</strong> <p>No address found.</p>
+      </span>;
       return;
     }
 
@@ -138,7 +142,12 @@ export const DropdownSessionDetails = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 
@@ -150,7 +159,9 @@ export const DropdownSessionDetails = () => {
   const handleWrapSession = async () => {
     if (!address || !userRole) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      <span className="flex flex-col">
+        <strong>Please connect first.</strong> <p>No address found.</p>
+      </span>;
       return;
     }
 
@@ -162,7 +173,12 @@ export const DropdownSessionDetails = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected:</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 

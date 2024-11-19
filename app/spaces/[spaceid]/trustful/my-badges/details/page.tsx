@@ -10,6 +10,8 @@ import { Event, Space, SpaceEventData } from '@/types';
 import SubSidebar from '@/components/layout/Sidebar/SubSidebar';
 import { useTrustful } from '@/context/TrustfulContext';
 import { MyBadgeDetails } from '@/app/spaces/[spaceid]/trustful/my-badges/details/components';
+import { ChakraProvider } from '@chakra-ui/react';
+import chakraTheme from '@/theme/lib/chakra-ui';
 
 const TrustfulPage = () => {
   const params = useParams();
@@ -144,7 +146,10 @@ const TrustfulPage = () => {
             padding: '20px',
           }}
         >
-          <MyBadgeDetails />
+          <ChakraProvider theme={chakraTheme}>
+
+            <MyBadgeDetails />
+          </ChakraProvider>
         </Box>
       </Stack>
     </Stack>

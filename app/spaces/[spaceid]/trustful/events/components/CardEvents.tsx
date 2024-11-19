@@ -27,7 +27,9 @@ export const CardEvents = () => {
 
   useEffect(() => {
     if (!address) {
-      toast.error('Please connect first. No address found.');
+      <span className="flex flex-col">
+        <strong>Please connect first.</strong> <p>No address found.</p>
+      </span>;
       return;
     }
 

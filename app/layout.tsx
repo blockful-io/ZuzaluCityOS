@@ -21,6 +21,7 @@ import { LitProvider } from '@/context/LitContext';
 import { DialogProvider } from '@/components/dialog/DialogContext';
 import { GlobalDialog } from '@/components/dialog/GlobalDialog';
 import { ToastProvider } from '@/components/toast/ToastContext';
+import { CheckIcon, InfoIcon } from '@chakra-ui/icons';
 
 const queryClient = new QueryClient();
 
@@ -78,7 +79,41 @@ function RootLayout({
                               <div style={{ minHeight: `calc(100vh - 50px)` }}>
                                 {children}
                               </div>
-                              <Toaster />
+                              <Toaster
+                                position="top-right"
+                                toastOptions={{
+                                  duration: 4000,
+
+                                  style: {
+                                    padding: '16px',
+                                    borderRadius: '8px',
+                                    color: '#ffffff',
+                                    fontSize: '14px',
+                                  },
+
+                                  success: {
+                                    style: {
+                                      background: '#4CAF50',
+                                    },
+                                    icon: <CheckIcon color="#FFFFFF" />,
+                                    iconTheme: {
+                                      primary: '#4CAF50',
+                                      secondary: '#FFFFFF',
+                                    },
+                                  },
+
+                                  error: {
+                                    style: {
+                                      background: '#F44336',
+                                    },
+                                    icon: <InfoIcon color="#FFFFFF" />,
+                                    iconTheme: {
+                                      primary: '#F44336',
+                                      secondary: '#FFFFFF',
+                                    },
+                                  },
+                                }}
+                              />
                             </AppContextProvider>
                           </TrustfulContextProvider>
                         </ZupassProvider>

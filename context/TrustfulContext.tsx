@@ -30,6 +30,7 @@ import {
 import { EthereumAddress } from '@/app/spaces/[spaceid]/trustful/utils/types';
 // import toast from 'react-hot-toast';
 import { getSpace } from '@/app/spaces/[spaceid]/trustful/service/backend/getSpace';
+import toast from 'react-hot-toast';
 
 interface User {
   address: Address;
@@ -128,6 +129,11 @@ export const TrustfulContextProvider: React.FC<
   const handleBadgeDropdown = async () => {
     if (!address) {
       // toast.error('No account connected. Please connect your wallet.');
+      // toast.error(
+      //   <span className="flex flex-col">
+      //     <strong>No account connected.</strong> <p>Please connect your wallet.</p>
+      //   </span>,
+      // );
       return;
     }
 

@@ -87,12 +87,20 @@ export const DropdownEventSelected = () => {
   const handleCreateSession = async () => {
     if (!address) {
       setIsLoading(false);
-      toast.error('Please connect first. No address found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No address found.</p>
+        </span>,
+      );
       return;
     }
     if (!userRole || userRole.role == Role.NO_ROLE) {
       setIsLoading(false);
-      toast.error('Please connect first. No role found.');
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Please connect first.</strong> <p>No role found.</p>
+        </span>,
+      );
       return;
     }
 
@@ -120,7 +128,12 @@ export const DropdownEventSelected = () => {
 
     if (response instanceof Error) {
       setIsLoading(false);
-      toast.error(`Transaction Rejected: ${response.message}`);
+
+      toast.error(
+        <span className="flex flex-col">
+          <strong>Transaction Rejected</strong> <p>{response.message}</p>
+        </span>,
+      );
       return;
     }
 
